@@ -1,0 +1,16 @@
+[
+{
+  "modid": "minecrafthelper",
+  "name": "Minecraft Helper",
+  "description": "Helper mod for mods that don't want to reinvent the wheel.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "www.tofvesson.net",
+  "updateUrl": "",
+  "authorList": ["W1zzRD"],
+  "credits": "The Forge and FML guys for making mod development possible and Bread10 for including some nice code and stuff :P",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
