@@ -2,7 +2,7 @@
 {
   "modid": "minecrafthelper",
   "name": "Minecraft Helper",
-  "description": "Helper mod for mods that don't want to reinvent the wheel.",
+  "description": "Helper mod for people that don't want to reinvent the wheel.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "www.tofvesson.net",

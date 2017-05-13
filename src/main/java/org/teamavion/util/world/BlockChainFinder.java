@@ -1,6 +1,5 @@
 package org.teamavion.util.world;
 
-import com.google.common.base.Optional;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
@@ -13,6 +12,7 @@ import org.teamavion.util.support.Pair;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import static net.minecraft.util.EnumFacing.*;
 import static org.teamavion.util.world.BlockChainFinder.SearchMode.*;
@@ -63,23 +63,23 @@ public class BlockChainFinder {
 
     public BlockChainFinder setStrict(boolean strict){ this.strict = strict; return this; }
     public BlockChainFinder add(int id, Block b, int meta){
-        if(!isAllowed(b, meta)) search.put(id, new Pair<ObjectReference<? extends Block>, Optional<Integer>>(new ImmutableReference<>(b), Optional.of(meta)));
+        if(!isAllowed(b, meta)) search.put(id, new Pair<>(new ImmutableReference<>(b), Optional.of(meta)));
         return this;
     }
 
     public BlockChainFinder add(int id, Block b){
-        if(!isAllowed(b)) search.put(id, new Pair<ObjectReference<? extends Block>, Optional<Integer>>(new ImmutableReference<>(b), Optional.<Integer>absent()));
+        if(!isAllowed(b)) search.put(id, new Pair<>(new ImmutableReference<>(b), Optional.empty()));
         clearWithMeta(b);
         return this;
     }
 
     public BlockChainFinder add(int id, ObjectReference<Block> typeRef){
-        if(!isAllowed(typeRef)) search.put(id, new Pair<ObjectReference<? extends Block>, Optional<Integer>>(typeRef, Optional.<Integer>absent()));
+        if(!isAllowed(typeRef)) search.put(id, new Pair<>(typeRef, Optional.empty()));
         return this;
     }
 
     public BlockChainFinder add(int id, ObjectReference<Block> typeRef, int meta){
-        if(!isAllowed(typeRef)) search.put(id, new Pair<ObjectReference<? extends Block>, Optional<Integer>>(typeRef, Optional.of(meta)));
+        if(!isAllowed(typeRef)) search.put(id, new Pair<>(typeRef, Optional.of(meta)));
         return this;
     }
 
@@ -91,13 +91,13 @@ public class BlockChainFinder {
     public Optional<Integer> getIdFor(Block b){
         Pair<ObjectReference<? extends Block>, Optional<Integer>> p;
         for(Integer i : search.keySet()) if(b.equals((p=search.get(i)).getKey().get()) && !p.getValue().isPresent()) return Optional.of(i);
-        return Optional.absent();
+        return Optional.empty();
     }
 
-    public Optional<Integer> getIdFor(Block b, int meta){
+    public java.util.Optional<Integer> getIdFor(Block b, int meta){
         Pair<ObjectReference<? extends Block>, Optional<Integer>> p;
-        for(Integer i : search.keySet()) if(b.equals((p=search.get(i)).getKey().get()) && p.getValue().isPresent() && p.getValue().get()==meta) return Optional.of(i);
-        return Optional.absent();
+        for(Integer i : search.keySet()) if(b.equals((p=search.get(i)).getKey().get()) && p.getValue().isPresent() && p.getValue().get()==meta) return java.util.Optional.of(i);
+        return java.util.Optional.empty();
     }
 
     protected void clearWithMeta(Block b){
@@ -114,7 +114,7 @@ public class BlockChainFinder {
         purge();
         ArrayList<BlockPos> a = new ArrayList<>();
         a.add(start);
-        findAt(w, start, a, new ArrayList<Pair<Block, Integer>>(), mode, start);
+        findAt(w, start, a, new ArrayList<>(), mode, start);
         return a;
     }
 
@@ -123,7 +123,7 @@ public class BlockChainFinder {
         ArrayList<BlockPos> nPos = new ArrayList<>();
         int ctr = -1;
         if(mode!=CROSS){
-            for(int i = 0; i< values().length; ++i) temp[++ctr] = WorldHelper.getAt(at, values()[i]);
+            for(int i = 0; i< EnumFacing.values().length; ++i) temp[++ctr] = WorldHelper.getAt(at, EnumFacing.values()[i]);
             if(mode==CARDINAL_DIAGONAL || mode==CUBIC){
                 for(int i = 0; (i/2)<EnumFacing.HORIZONTALS.length; i+=2){
                     temp[++ctr] = WorldHelper.translate(at, HORIZONTALS[i], UP);
