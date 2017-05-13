@@ -71,10 +71,10 @@ public final class SetupHelper {
         for(Field f : from.getDeclaredFields()) {
             try{
                 Class<?> c;
-                boolean block = false;
+                boolean block;
                 Item i;
                 f.setAccessible(true);
-                if (Modifier.isStatic(f.getModifiers()) && (block=(f.getAnnotation(BlockRegister.class) != null) || f.getAnnotation(ItemRegister.class) != null ||
+                if (Modifier.isStatic(f.getModifiers()) && ((block=(f.getAnnotation(BlockRegister.class) != null)) || f.getAnnotation(ItemRegister.class) != null ||
                         (f.getAnnotation(Auto.class) != null && ((block=Block.class.isAssignableFrom(c=f.get(null).getClass())) || Item.class.isAssignableFrom(c))))){
                     IForgeRegistryEntry entry = (IForgeRegistryEntry) f.get(null);
                     if (entry.getRegistryName() == null)
