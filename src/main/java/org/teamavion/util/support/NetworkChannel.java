@@ -133,24 +133,26 @@ public class NetworkChannel {
      * Event carrying data about the world.
      */
     public static final class WorldEvent extends Event{
-        private static final Pattern pattern = Pattern.compile("(\\d+):(\\d+):(\\d+);(.+?)");
+        private static final Pattern pattern = Pattern.compile("(\\d+):(\\d+):(\\d+);(\\d+);(.+)");
         private BlockPos pos = new BlockPos(0, 0, 0);
+        private int id = 0;
         private JsonObject event = new JsonObject();
-        public WorldEvent(BlockPos pos, JsonObject event){ this.pos = pos; this.event = event; type = WORLD; }
+        public WorldEvent(BlockPos pos, int id, JsonObject event){ this.pos = pos; this.event = event; this.id = id; type = WORLD; }
         public WorldEvent(){ type = WORLD; }
 
         public BlockPos getPos(){ return pos; }
         public JsonObject getEvent(){ return event; }
 
         @Override
-        protected String serialize() { return String.valueOf(pos.getX()) + ':' + pos.getY() + ':' + pos.getZ() + ';' + event.toString(); }
+        protected String serialize() { return String.valueOf(pos.getX()) + ':' + pos.getY() + ':' + pos.getZ() + ';' + id + ";" + event.toString(); }
 
         @Override
         protected void deserialize() {
             Matcher m = pattern.matcher(data);
             if(m.matches()){
                 pos = new BlockPos(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)));
-                try{ event = (JsonObject) new JsonParser().parse(m.group(4)); }catch(JsonParseException fail){ event = new JsonObject(); }
+                id = Integer.parseInt(m.group(4));
+                try{ event = (JsonObject) new JsonParser().parse(m.group(5)); }catch(JsonParseException fail){ fail.printStackTrace(); }
             }
         }
 
