@@ -1,10 +1,10 @@
 package org.teamavion.util.support;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -12,12 +12,14 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import static org.teamavion.util.support.NetworkChannel.Event.EventType.RAW;
 import static org.teamavion.util.support.NetworkChannel.Event.EventType.WORLD;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "unused"})
 public class NetworkChannel {
     public final SimpleNetworkWrapper CHANNEL;
     protected final NetMessage n = new NetMessage();
@@ -51,8 +53,8 @@ public class NetworkChannel {
 
         @Override
         public Event onMessage(EventWrapper message, MessageContext ctx) {
-            if(message.event instanceof WorldEvent && worldHandler!=null) return worldHandler.onRecieveMessage(ctx.side, (WorldEvent) message.event);
-            else return rawHandler==null?null:rawHandler.onRecieveMessage(ctx.side, message.event);
+            if(message.event instanceof WorldEvent && worldHandler!=null) return worldHandler.onReceiveMessage(ctx.side, (WorldEvent) message.event);
+            else return rawHandler==null?null:rawHandler.onReceiveMessage(ctx.side, message.event);
         }
     }
 
@@ -63,9 +65,10 @@ public class NetworkChannel {
          * @param data Data to process.
          * @return Message to return to sender. Note: Can be null if no data should be sent back.
          */
-        Event onRecieveMessage(Side from, T data);
+        Event onReceiveMessage(Side from, T data);
     }
 
+    @SuppressWarnings("unused")
     public static final class EventWrapper implements IMessage{
         Event event;
         public EventWrapper(Event event){ this.event = event; }
@@ -80,7 +83,9 @@ public class NetworkChannel {
         @Override public void toBytes(ByteBuf buf) { event.toBytes(buf); }
     }
 
+    @SuppressWarnings("unused")
     public static abstract class Event implements IMessage{
+        public boolean debug = false;
         protected EventType type = RAW;
         protected String data = "";
         public Event(String data){ this.data = data; }
@@ -122,6 +127,7 @@ public class NetworkChannel {
     /**
      * Implementation of {@link Event}. Nothing in this class can't be accessed from the base {@link Event} class.
      */
+    @SuppressWarnings("unused")
     public static final class RawEvent extends Event{
         public RawEvent(String data){ super(data); }
         public RawEvent(){ super(); }
@@ -132,27 +138,30 @@ public class NetworkChannel {
     /**
      * Event carrying data about the world.
      */
+    @SuppressWarnings("unused")
     public static final class WorldEvent extends Event{
         private static final Pattern pattern = Pattern.compile("(\\d+):(\\d+):(\\d+);(\\d+);(.+)");
         private BlockPos pos = new BlockPos(0, 0, 0);
         private int id = 0;
-        private JsonObject event = new JsonObject();
-        public WorldEvent(BlockPos pos, int id, JsonObject event){ this.pos = pos; this.event = event; this.id = id; type = WORLD; }
-        public WorldEvent(){ type = WORLD; }
+        private NBTTagCompound event = new NBTTagCompound();
+        public WorldEvent(BlockPos pos, int id, NBTTagCompound event){ this.pos = pos; this.event = event; this.id = id; type = WORLD; }
+        public WorldEvent(){ }
 
         public BlockPos getPos(){ return pos; }
-        public JsonObject getEvent(){ return event; }
+        public NBTTagCompound getEvent(){ return event; }
+        public int getId(){ return id; }
 
         @Override
         protected String serialize() { return String.valueOf(pos.getX()) + ':' + pos.getY() + ':' + pos.getZ() + ';' + id + ";" + event.toString(); }
 
         @Override
         protected void deserialize() {
+            if(type!=WORLD && debug) System.err.println("["+this+"] Error: Parsed type ("+type+") is not WORLD! This is probably an error!");
             Matcher m = pattern.matcher(data);
             if(m.matches()){
                 pos = new BlockPos(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)));
                 id = Integer.parseInt(m.group(4));
-                try{ event = (JsonObject) new JsonParser().parse(m.group(5)); }catch(JsonParseException fail){ fail.printStackTrace(); }
+                try{ event = JsonToNBT.getTagFromJson(m.group(5)); }catch(NBTException fail){ if(debug) fail.printStackTrace(); }
             }
         }
 
