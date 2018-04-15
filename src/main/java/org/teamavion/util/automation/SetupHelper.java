@@ -9,8 +9,10 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.*;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.fml.relauncher.Side;
 import org.teamavion.util.support.Reflection;
 import org.teamavion.util.support.Result;
@@ -32,7 +34,9 @@ public final class SetupHelper {
                     TileEntity tile;
                     if(block!=null){
                         register(block, BlockRegister.class, f, null, true);
-                        GameRegistry.register(new ItemBlock(block).setUnlocalizedName(block.getUnlocalizedName().substring(5)), block.getRegistryName());
+                        Item i = new ItemBlock(block).setUnlocalizedName(block.getUnlocalizedName().substring(5));
+                        i.setRegistryName(block.getRegistryName());
+                        ForgeRegistries.ITEMS.register(i);
                     }
                     else if ((item=searchAndInject(f, ItemRegister.class, net.minecraft.item.Item.class, ignoreValues))!=null){
                         register(item, ItemRegister.class, f, null, true);
@@ -102,10 +106,11 @@ public final class SetupHelper {
 
         ModContainer mc = Loader.instance().activeModContainer();
         String prefix = mc == null || (mc instanceof InjectedModContainer && ((InjectedModContainer)mc).wrappedContainer instanceof FMLContainer) ? "minecraft" : mc.getModId().toLowerCase();
-        if(t.getRegistryName()!=null) GameRegistry.register(t);
-        else GameRegistry.register(t,
-                (a != null && a.name().length() != 0) || (b!=null && get(b, "name", String.class).value.length() != 0) ?
-                        new ResourceLocation(prefix, name=autoName?a != null ? a.name() : get(b, "name", String.class).value:name) : new ResourceLocation(prefix, name=autoName?b==null?a.name():get(b, "name", String.class).value:name));
+        if(t.getRegistryName()!=null) t.setRegistryName((a != null && a.name().length() != 0) || (b!=null && get(b, "name", String.class).value.length() != 0) ?
+                new ResourceLocation(prefix, name=autoName?a != null ? a.name() : get(b, "name", String.class).value:name) : new ResourceLocation(prefix, name=autoName?b==null?a.name():get(b, "name", String.class).value:name));
+        if(Item.class.isAssignableFrom(t.getClass())) ForgeRegistries.ITEMS.register((Item)t);
+        else if(Block.class.isAssignableFrom(t.getClass())) ForgeRegistries.BLOCKS.register((Block)t);
+        else if(EntityEntry.class.isAssignableFrom(t.getClass())) ForgeRegistries.ENTITIES.register((EntityEntry) t); // Idk. I haven't done this in a while...
         if(name==null) name = t.getRegistryName().getResourcePath();
         if(t instanceof net.minecraft.block.Block && ((net.minecraft.block.Block)t).getUnlocalizedName().equals("tile.null")) ((net.minecraft.block.Block)t).setUnlocalizedName(name);
         else if(t instanceof net.minecraft.item.Item && ((net.minecraft.item.Item)t).getUnlocalizedName().equals("item.null")) ((net.minecraft.item.Item)t).setUnlocalizedName(name);
