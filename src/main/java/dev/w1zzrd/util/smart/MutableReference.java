@@ -1,4 +1,4 @@
-package org.teamavion.util.smart;
+package dev.w1zzrd.util.smart;
 
 public class MutableReference<T> implements ObjectReference<T> {
     protected T value;

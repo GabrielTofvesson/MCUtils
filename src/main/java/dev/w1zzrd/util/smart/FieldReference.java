@@ -1,6 +1,6 @@
-package org.teamavion.util.smart;
+package dev.w1zzrd.util.smart;
 
-import org.teamavion.util.support.Reflection;
+import dev.w1zzrd.util.support.Reflection;
 
 import java.lang.reflect.Field;
 
@@ -16,8 +16,15 @@ public class FieldReference<T> implements ObjectReference<T> {
     protected Class resolved;
     protected Field resolvedField;
 
-    public FieldReference(String fieldName, String clazzName, Object invokeOn){ this.fieldName = fieldName; this.clazzName = clazzName; this.invokeOn = invokeOn; }
-    public FieldReference(Field field, Object invokeOn){
+    public FieldReference(String fieldName, String clazzName, Object invokeOn)
+    {
+        this.fieldName = fieldName;
+        this.clazzName = clazzName;
+        this.invokeOn = invokeOn;
+    }
+
+    public FieldReference(Field field, Object invokeOn)
+    {
         resolvedField = field;
         try{ resolvedField.setAccessible(true); }catch(Exception ignored){}
         resolved = resolvedField.getDeclaringClass();
@@ -25,7 +32,14 @@ public class FieldReference<T> implements ObjectReference<T> {
         clazzName = null;
         this.invokeOn = invokeOn;
     }
-    public FieldReference(String fieldName, Class clazz, Object invokeOn){ this.fieldName = fieldName; clazzName = null; resolved = clazz; this.invokeOn = invokeOn; }
+
+    public FieldReference(String fieldName, Class clazz, Object invokeOn)
+    {
+        this.fieldName = fieldName;
+        clazzName = null;
+        resolved = clazz;
+        this.invokeOn = invokeOn;
+    }
 
     @Override
     public T get() {

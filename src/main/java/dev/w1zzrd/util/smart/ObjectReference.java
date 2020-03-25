@@ -1,4 +1,4 @@
-package org.teamavion.util.smart;
+package dev.w1zzrd.util.smart;
 
 /**
  * Points to/stores the value of an object. This defines a meta-structure for passing arguments to a class.

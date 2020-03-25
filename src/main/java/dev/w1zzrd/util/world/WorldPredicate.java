@@ -1,4 +1,4 @@
-package org.teamavion.util.world;
+package dev.w1zzrd.util.world;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;

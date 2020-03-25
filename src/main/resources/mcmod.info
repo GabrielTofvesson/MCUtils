@@ -1,14 +1,14 @@
 [
 {
   "modid": "minecrafthelper",
-  "name": "Minecraft Helper",
+  "name": "Minecraft Utils",
   "description": "Helper mod for people that don't want to reinvent the wheel.",
   "version": "1.2",
   "mcversion": "1.12.2",
-  "url": "www.tofvesson.net",
+  "url": "https://w1zzrd.dev",
   "updateUrl": "",
   "authorList": ["W1zzRD"],
-  "credits": "The Forge and FML guys for making mod development possible and Bread10 for including some nice code and stuff :P",
+  "credits": "The Forge and FML guys for making mod development possible and Bread10 for including some nice code and stuff",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

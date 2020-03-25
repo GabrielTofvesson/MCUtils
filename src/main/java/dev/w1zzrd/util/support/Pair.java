@@ -1,4 +1,4 @@
-package org.teamavion.util.support;
+package dev.w1zzrd.util.support;
 
 import java.io.Serializable;
 

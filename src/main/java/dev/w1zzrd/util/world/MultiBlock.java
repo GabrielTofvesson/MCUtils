@@ -1,16 +1,16 @@
-package org.teamavion.util.world;
+package dev.w1zzrd.util.world;
 
 import com.google.common.base.Optional;
+import dev.w1zzrd.util.support.Log;
+import dev.w1zzrd.util.support.Pair;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import org.teamavion.util.smart.ImmutableReference;
-import org.teamavion.util.smart.ObjectReference;
-import org.teamavion.util.support.Log;
-import org.teamavion.util.support.Pair;
+import dev.w1zzrd.util.smart.ImmutableReference;
+import dev.w1zzrd.util.smart.ObjectReference;
 
 import java.util.*;
 

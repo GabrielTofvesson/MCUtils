@@ -1,21 +1,18 @@
-package org.teamavion.util.world;
+package dev.w1zzrd.util.world;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import org.teamavion.util.smart.ImmutableReference;
-import org.teamavion.util.smart.ObjectReference;
-import org.teamavion.util.support.Pair;
+import dev.w1zzrd.util.smart.ImmutableReference;
+import dev.w1zzrd.util.smart.ObjectReference;
+import dev.w1zzrd.util.support.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static net.minecraft.util.EnumFacing.*;
-import static org.teamavion.util.world.BlockChainFinder.SearchMode.*;
+import static dev.w1zzrd.util.world.BlockChainFinder.SearchMode.*;
 
 /**
  * Finds a multi-block structure of a dynamic size based on allowed/disallowed block types.
@@ -123,11 +120,13 @@ public class BlockChainFinder {
         ArrayList<BlockPos> nPos = new ArrayList<>();
         int ctr = -1;
         if(mode!=CROSS){
-            for(int i = 0; i< EnumFacing.values().length; ++i) temp[++ctr] = WorldHelper.getAt(at, EnumFacing.values()[i]);
+            for(int i = 0; i < EnumFacing.values().length; ++i)
+                temp[++ctr] = WorldHelper.getAt(at, EnumFacing.values()[i]);
+
             if(mode==CARDINAL_DIAGONAL || mode==CUBIC){
-                for(int i = 0; (i/2)<EnumFacing.HORIZONTALS.length; i+=2){
-                    temp[++ctr] = WorldHelper.translate(at, HORIZONTALS[i], UP);
-                    temp[++ctr] = WorldHelper.translate(at, HORIZONTALS[i], DOWN);
+                for(int i = 0; i < EnumFacing.HORIZONTALS.length; ++i){
+                    temp[++ctr] = WorldHelper.translate(at, HORIZONTALS[i * 2], UP);
+                    temp[++ctr] = WorldHelper.translate(at, HORIZONTALS[i * 2], DOWN);
                 }
             }
         }

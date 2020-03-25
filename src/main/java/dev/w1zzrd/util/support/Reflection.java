@@ -1,4 +1,4 @@
-package org.teamavion.util.support;
+package dev.w1zzrd.util.support;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -45,12 +45,12 @@ public final class Reflection {
         StackTraceElement[] trace = new Exception().getStackTrace();
         boolean foundFirst = false, isReflective;
         for(int i = 0; i<trace.length; ++i) {
-            if (i < depth || ((isReflective=(trace[i].isNativeMethod() || trace[i].getClassName().startsWith("java.lang.reflect") ||
-                    trace[i].getClassName().startsWith("sun.reflect"))) && !foundFirst) || (isReflective && ignoreSpecial)) continue;
-            if(!foundFirst){
-                foundFirst = true;
-                continue;
-            }
+            if (i < depth || ((trace[i].isNativeMethod() || trace[i].getClassName().startsWith("java.lang.reflect") ||
+                    trace[i].getClassName().startsWith("sun.reflect")) && ignoreSpecial)) continue;
+            //if(!foundFirst){
+            //    foundFirst = true;
+            //    continue;
+            //}
             try{ return Class.forName(trace[i].getClassName()); }catch(Throwable e){ e.printStackTrace(); return null; }
         }
         return null;

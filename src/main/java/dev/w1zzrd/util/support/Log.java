@@ -1,4 +1,4 @@
-package org.teamavion.util.support;
+package dev.w1zzrd.util.support;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;

@@ -1,4 +1,4 @@
-package org.teamavion.util.smart;
+package dev.w1zzrd.util.smart;
 
 public final class ImmutableReference<T> implements ObjectReference<T>{
     private final T t;

@@ -1,4 +1,4 @@
-package org.teamavion.util.automation;
+package dev.w1zzrd.util.automation;
 
 @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
 public @interface Auto {
