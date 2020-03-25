@@ -32,7 +32,5 @@ public class MinecraftHelper {
                     SyncHandler.Companion.unregisterSerializer(ser);
                     SyncHandler.Companion.registerSerializer(new SidedSerializerWrapper(ser));
                 });
-
-        //SyncHandler.Companion.registerSerializer(new ClientVarSerializer());
     }
 }
