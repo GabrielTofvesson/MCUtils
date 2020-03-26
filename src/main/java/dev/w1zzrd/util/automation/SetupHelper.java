@@ -9,11 +9,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.common.thread.SidedThreadGroups;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-import net.minecraftforge.fml.relauncher.Side;
 import java.lang.reflect.*;
 import java.util.Arrays;
+
+import static dev.w1zzrd.util.net.SidedSerializerWrapper.isServer;
 
 @SuppressWarnings({"unchecked", "unused", "ConstantConditions", "deprecation"})
 public final class SetupHelper {
@@ -110,7 +110,7 @@ public final class SetupHelper {
      */
     public static void registerRenders(Class<?> from) {
         // Should only be run on client
-        if(Thread.currentThread().getThreadGroup() == SidedThreadGroups.SERVER || Minecraft.getMinecraft().getRenderItem() == null)
+        if(isServer() || Minecraft.getMinecraft().getRenderItem() == null)
             return;
 
         // Check all fields in class

@@ -29,7 +29,7 @@ public class SidedSerializerWrapper extends Serializer {
     }
 
     protected final boolean isSender(SyncFlag[] flags) {
-        SyncFlag side = FMLCommonHandler.instance().getSide() == Side.SERVER ? serverOwned : clientOwned;
+        SyncFlag side = isServer() ? serverOwned : clientOwned;
         SyncFlag other = side == serverOwned ? clientOwned : serverOwned;
 
         boolean hasOther = false;
@@ -46,7 +46,7 @@ public class SidedSerializerWrapper extends Serializer {
     }
 
     protected final boolean isRecipient(SyncFlag[] flags) {
-        SyncFlag side = Thread.currentThread().getThreadGroup() == SidedThreadGroups.SERVER ? serverOwned : clientOwned;
+        SyncFlag side = isServer() ? serverOwned : clientOwned;
         SyncFlag other = side == serverOwned ? clientOwned : serverOwned;
 
         boolean hasOwner = false;
@@ -95,5 +95,14 @@ public class SidedSerializerWrapper extends Serializer {
     public void serializeExplicit(Field field, SyncFlag[] syncFlags, Object o, WBuffer wBuffer, Class<?> aClass) {
         if (!isSender(syncFlags)) return;
         wrap.serializeExplicit(field, syncFlags, o, wBuffer, aClass);
+    }
+
+
+    /**
+     * Checks if the current code is part of a Minecraft server
+     * @return True if code is being run in a server thread, else false
+     */
+    public static boolean isServer() {
+        return Thread.currentThread().getThreadGroup() == SidedThreadGroups.SERVER;
     }
 }
