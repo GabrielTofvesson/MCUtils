@@ -49,17 +49,22 @@ public class SidedSerializerWrapper extends Serializer {
         SyncFlag side = isServer() ? serverOwned : clientOwned;
         SyncFlag other = side == serverOwned ? clientOwned : serverOwned;
 
-        boolean hasOwner = false;
+        boolean hasCurrent = false;
+        boolean hasOther = false;
 
         // Check if sided ownership was declared
         for(SyncFlag flag : flags)
-            if (flag == side)
-                return false;
-            else if (flag == other)
-                hasOwner = true;
+            if (flag == side) {
+                if (hasOther) return true;
+                else hasCurrent = true;
+            }
+            else if (flag == other) {
+                if (hasCurrent) return true;
+                else hasOther = true;
+            }
 
-        // If no side has claimed ownership, assume both sides own it
-        return hasOwner;
+        // If no side has (or both sides have) claimed ownership, assume ownership
+        return (hasCurrent == hasOther) || hasOther;
     }
 
 
