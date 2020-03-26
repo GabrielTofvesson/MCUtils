@@ -2,6 +2,7 @@ package dev.w1zzrd.util.net;
 
 import dev.w1zzrd.util.MinecraftHelper;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -114,7 +115,7 @@ public abstract class NetworkedTileEntity extends TileEntity implements ITickabl
         public ContextEvent handle(MessageContext context) {
             if (context.side == Side.CLIENT){
                 // Locate the targeted TileEntity
-                TileEntity target = DimensionManager.getWorld(dimId).getTileEntity(new BlockPos(x, y, z));
+                TileEntity target = Minecraft.getMinecraft().world.getTileEntity(new BlockPos(x, y, z));
 
                 // Ensure it's a proper target and deserialize
                 if (target instanceof NetworkedTileEntity) {

@@ -1,6 +1,7 @@
 package dev.w1zzrd.util.net;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.thread.SidedThreadGroups;
 import net.minecraftforge.fml.relauncher.Side;
 import net.tofvesson.annotation.SyncFlag;
 import net.tofvesson.data.RBuffer;
@@ -27,7 +28,7 @@ public class SidedSerializerWrapper extends Serializer {
         this.wrap = wrap;
     }
 
-    protected final boolean isOwner(SyncFlag[] flags) {
+    protected final boolean isSender(SyncFlag[] flags) {
         SyncFlag side = FMLCommonHandler.instance().getSide() == Side.SERVER ? serverOwned : clientOwned;
         SyncFlag other = side == serverOwned ? clientOwned : serverOwned;
 
@@ -44,17 +45,33 @@ public class SidedSerializerWrapper extends Serializer {
         return !hasOther;
     }
 
+    protected final boolean isRecipient(SyncFlag[] flags) {
+        SyncFlag side = Thread.currentThread().getThreadGroup() == SidedThreadGroups.SERVER ? serverOwned : clientOwned;
+        SyncFlag other = side == serverOwned ? clientOwned : serverOwned;
+
+        boolean hasOwner = false;
+
+        // Check if sided ownership was declared
+        for(SyncFlag flag : flags)
+            if (flag == side)
+                return false;
+            else if (flag == other)
+                hasOwner = true;
+
+        // If no side has claimed ownership, assume both sides own it
+        return hasOwner;
+    }
+
 
 
     @Override
     public boolean canSerialize(Object o, SyncFlag[] syncFlags, Class<?> aClass) {
-        if (isOwner(syncFlags)) return false;
-        return wrap.canSerialize(o, syncFlags, aClass);
+        return isSender(syncFlags) && wrap.canSerialize(o, syncFlags, aClass);
     }
 
     @Override
     public boolean canDeserialize(Object obj, SyncFlag[] flags, Class<?> type) {
-        return isOwner(flags) && wrap.canDeserialize(obj, flags, type);
+        return isRecipient(flags) && wrap.canDeserialize(obj, flags, type);
     }
 
     @Override
@@ -64,19 +81,19 @@ public class SidedSerializerWrapper extends Serializer {
 
     @Override
     public void computeSizeExplicit(Field field, SyncFlag[] syncFlags, Object o, WriteState writeState, Class<?> aClass) {
-        if (isOwner(syncFlags)) return;
+        if (!isSender(syncFlags)) return;
         wrap.computeSizeExplicit(field, syncFlags, o, writeState, aClass);
     }
 
     @Override
     public void deserializeExplicit(Field field, SyncFlag[] syncFlags, Object o, RBuffer rBuffer, Class<?> aClass) {
-        if (isOwner(syncFlags)) return;
+        if (!isRecipient(syncFlags)) return;
         wrap.deserializeExplicit(field, syncFlags, o, rBuffer, aClass);
     }
 
     @Override
     public void serializeExplicit(Field field, SyncFlag[] syncFlags, Object o, WBuffer wBuffer, Class<?> aClass) {
-        if (isOwner(syncFlags)) return;
+        if (!isSender(syncFlags)) return;
         wrap.serializeExplicit(field, syncFlags, o, wBuffer, aClass);
     }
 }

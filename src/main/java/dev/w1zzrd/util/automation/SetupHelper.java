@@ -9,6 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.common.thread.SidedThreadGroups;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.fml.relauncher.Side;
 import java.lang.reflect.*;
@@ -109,7 +110,7 @@ public final class SetupHelper {
      */
     public static void registerRenders(Class<?> from) {
         // Should only be run on client
-        if(FMLCommonHandler.instance().getSide()==Side.SERVER || Minecraft.getMinecraft().getRenderItem()==null)
+        if(Thread.currentThread().getThreadGroup() == SidedThreadGroups.SERVER || Minecraft.getMinecraft().getRenderItem() == null)
             return;
 
         // Check all fields in class
